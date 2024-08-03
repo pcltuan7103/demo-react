@@ -1,14 +1,13 @@
 .homepage-container {
   display: flex; // Sử dụng Flexbox để căn chỉnh phần tử
-  width: 100vw; // Chiếm toàn bộ chiều rộng của viewport
+  width: 100%; // Chiếm toàn bộ chiều rộng của viewport
   height: 100vh; // Chiếm toàn bộ chiều cao của viewport
   position: relative; // Để có thể sử dụng z-index nếu cần
 
   // Style cho video
   video {
-    width: 50vw; // Video chiếm 50% chiều rộng của viewport
+    width: 50%; // Video chiếm 50% chiều rộng của viewport
     height: 100vh; // Video chiếm toàn bộ chiều cao của viewport
-    object-fit: cover; // Đảm bảo video lấp đầy không gian mà không bị biến dạng
     position: absolute; // Đặt video ở vị trí tuyệt đối
     left: 0; // Đặt video ở bên trái
     top: 0; // Đặt video ở trên cùng
@@ -17,7 +16,7 @@
 
   // Style cho nội dung
   .homepage-content {
-    padding: 100px; // Padding cho nội dung
+    padding: 150px; // Padding cho nội dung
     width: 50%; // Nội dung chiếm 50% chiều rộng của container
     display: flex; // Sử dụng Flexbox để căn chỉnh các phần tử trong nội dung
     flex-direction: column; // Đặt các phần tử theo chiều dọc
