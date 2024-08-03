@@ -1,5 +1,5 @@
 const Home = (props) => {
-  return <div></div>;
+  return <div className="homepage-container">Homepage Component</div>;
 };
 
 export default Home;
