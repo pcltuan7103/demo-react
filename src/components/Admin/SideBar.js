@@ -16,7 +16,11 @@ import {
   FaRegLaughWink,
   FaHeart,
 } from "react-icons/fa";
+import { DiReact } from "react-icons/di";
+import { MdDashboard } from "react-icons/md";
 import sidebarBg from "../../assets/bg2.jpg";
+import "./SideBar.scss";
+import { Link } from "react-router-dom";
 
 const SideBar = (props) => {
   const { image, collapsed, rtl, toggled, handleToggleSidebar } = props;
@@ -44,28 +48,27 @@ const SideBar = (props) => {
               whiteSpace: "nowrap",
             }}
           >
-            Hoi Dan IT
+            <DiReact color={"#00bfff"} size={"3em"} />
+            <span>Hoi Dan IT</span>
           </div>
         </SidebarHeader>
 
         <SidebarContent>
           <Menu iconShape="circle">
-            <MenuItem
-              icon={<FaTachometerAlt />}
-              suffix={<span className="badge red">New</span>}
-            >
+            <MenuItem icon={<MdDashboard />}>
               Dashboard
+              <Link to="/admins" />
             </MenuItem>
-            <MenuItem icon={<FaGem />}>Components</MenuItem>
           </Menu>
           <Menu iconShape="circle">
-            <SubMenu
-              suffix={<span className="badge yellow">3</span>}
-              icon={<FaRegLaughWink />}
-            >
-              <MenuItem> 1</MenuItem>
-              <MenuItem> 2</MenuItem>
-              <MenuItem> 3</MenuItem>
+            <SubMenu icon={<FaGem />} title="Features">
+              <MenuItem>
+                {" "}
+                Manage Users
+                <Link to="/admins/manage-user" />
+              </MenuItem>
+              <MenuItem> Manage Quiz</MenuItem>
+              <MenuItem> Manage Question</MenuItem>
             </SubMenu>
           </Menu>
         </SidebarContent>
@@ -78,7 +81,7 @@ const SideBar = (props) => {
             }}
           >
             <a
-              href="https://github.com/azouaoui-med/react-pro-sidebar"
+              href="https://github.com/pcltuan7103/demo-react"
               target="_blank"
               className="sidebar-btn"
               rel="noopener noreferrer"
@@ -91,7 +94,7 @@ const SideBar = (props) => {
                   overflow: "hidden",
                 }}
               >
-                View Source
+                &#168; Hoi Dan IT
               </span>
             </a>
           </div>
