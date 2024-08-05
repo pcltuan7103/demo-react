@@ -62,6 +62,7 @@ function ModalCreateUser(props) {
     if (data && data.EC === 0) {
       toast.success(data.EM);
       handleClose();
+      props.fecthListUsers();
     }
 
     if (data && data.EC !== 0) {
