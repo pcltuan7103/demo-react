@@ -1,5 +1,3 @@
-import { eventWrapper } from "@testing-library/user-event/dist/utils";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -21,7 +19,6 @@ function ModalUpdateUser(props) {
     setPreviewImage("");
     props.resetUpdateData();
   };
-  const handleShow = () => setShow(true);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -59,7 +56,7 @@ function ModalUpdateUser(props) {
       );
   };
 
-  const handleSubmitCreateUser = async () => {
+  const handleUpdateUser = async () => {
     const isValidateemail = validateEmail(email);
     if (!isValidateemail) {
       toast.error("Invalid Value");
@@ -169,7 +166,7 @@ function ModalUpdateUser(props) {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={() => handleSubmitCreateUser()}>
+          <Button variant="primary" onClick={() => handleUpdateUser()}>
             Save Changes
           </Button>
         </Modal.Footer>
