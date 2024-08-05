@@ -1,13 +1,22 @@
 import { eventWrapper } from "@testing-library/user-event/dist/utils";
+import axios from "axios";
 import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { FcPlus } from "react-icons/fc";
 
-function ModalCreateUser() {
-  const [show, setShow] = useState(false);
+function ModalCreateUser(props) {
+  const { show, setShow } = props;
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    setEmail("");
+    setPassword("");
+    setUsername("");
+    setRole("USER");
+    setImage("");
+    setPreviewImage("");
+  };
   const handleShow = () => setShow(true);
 
   const [email, setEmail] = useState("");
@@ -26,11 +35,33 @@ function ModalCreateUser() {
     }
   };
 
+  const handleSubmitCreateUser = async () => {
+    // let data = {
+    //   email: email,
+    //   password: password,
+    //   username: username,
+    //   role: role,
+    //   userImage: image,
+    // };
+
+    const data = new FormData();
+    data.append("email", email);
+    data.append("password", password);
+    data.append("username", username);
+    data.append("role", role);
+    data.append("userImage", image);
+
+    let respone = await axios.post(
+      "http://localhost:8081/api/v1/participant",
+      data
+    );
+  };
+
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
+      {/* <Button variant="primary" onClick={handleShow}>
         Launch demo modal
-      </Button>
+      </Button> */}
 
       <Modal
         show={show}
