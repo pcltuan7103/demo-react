@@ -1,0 +1,71 @@
+.register-container {
+  .header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 45px;
+    padding: 0 100px;
+
+    button {
+      border: 1px solid #000;
+      padding: 5px 15px;
+      margin-left: 15px;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+
+      &:hover {
+        background-color: #fff;
+      }
+    }
+  }
+
+  .title {
+    font-size: 25px;
+    padding: 20px 0;
+    text-align: center;
+  }
+
+  .welcome {
+    font-size: 20px;
+    padding: 10px 0;
+    text-align: center;
+  }
+
+  .content-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    input {
+      margin-bottom: 15px;
+      margin-top: 3px;
+    }
+
+    .btn-login {
+      width: 100%;
+      height: 40px;
+      border: none;
+      margin: 20px 0;
+      border-radius: 10px;
+      color: #fff;
+      background-color: #000;
+    }
+
+    .show-hide-pass {
+      display: flex;
+      align-items: center;
+
+      .btn-show-hide {
+        border: none;
+        background-color: #fff;
+        margin-left: -40px;
+        margin-top: -15px;
+        font-size: 20px;
+      }
+    }
+  }
+
+  .back {
+    cursor: pointer;
+  }
+}

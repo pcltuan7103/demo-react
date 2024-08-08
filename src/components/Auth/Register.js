@@ -1,13 +1,20 @@
 import { useState } from "react";
-import "./Login.scss";
+import "./Register.scss";
 import { useNavigate } from "react-router-dom";
-import { postLogin } from "../../services/apiServices";
+import { postRegister } from "../../services/apiServices";
 import { toast } from "react-toastify";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-const Login = () => {
+const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
+
+  const toggleVisibility = () => {
+    setVisible(!visible);
+  };
 
   const validateEmail = (email) => {
     return String(email)
@@ -17,7 +24,7 @@ const Login = () => {
       );
   };
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     //validate
     const isValidateemail = validateEmail(email);
     if (!isValidateemail) {
@@ -30,10 +37,10 @@ const Login = () => {
       return;
     }
     //submit
-    let data = await postLogin(email, password);
+    let data = await postRegister(email, password, username);
     if (data && data.EC === 0) {
       toast.success(data.EM);
-      navigate("/");
+      navigate("/login");
     }
 
     if (data && +data.EC !== 0) {
@@ -42,15 +49,15 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
+    <div className="register-container">
       <div className="header">
-        <span>Don't have an acount yet?</span>
+        <span>Already have an account?</span>
         <button
           onClick={() => {
-            navigate("/register");
+            navigate("/login");
           }}
         >
-          Sign Up
+          Log In
         </button>
       </div>
       <div className="title mx-auto col-4">Hoi Dan IT</div>
@@ -69,24 +76,40 @@ const Login = () => {
         </div>
         <div className="form-group">
           <label className="form-label">Password</label>
+          <div className="show-hide-pass">
+            <input
+              type={visible ? "text" : "password"}
+              name="password"
+              className="form-control"
+              value={password}
+              onChange={(event) => {
+                setPassword(event.target.value);
+              }}
+            />
+            <button onClick={toggleVisibility} className="btn-show-hide">
+              {visible ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Username</label>
           <input
-            type="password"
+            type="text"
             className="form-control"
-            value={password}
+            value={username}
             onChange={(event) => {
-              setPassword(event.target.value);
+              setUsername(event.target.value);
             }}
           />
         </div>
-        <span className="forgot-password">Forgot Password?</span>
         <div>
           <button
             className="btn-login"
             onClick={() => {
-              handleLogin();
+              handleRegister();
             }}
           >
-            Login to HoiDanIT
+            Sign Up
           </button>
         </div>
         <div className=" text-center">
@@ -105,4 +128,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
