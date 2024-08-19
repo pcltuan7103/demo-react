@@ -9,11 +9,11 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [visible, setVisible] = useState(false);
+  const [isShowPassword, setIsShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const toggleVisibility = () => {
-    setVisible(!visible);
+    setIsShowPassword(!isShowPassword);
   };
 
   const validateEmail = (email) => {
@@ -64,7 +64,7 @@ const Register = () => {
       <div className="welcome mx-auto col-4">Who's this?</div>
       <div className="content-form mx-auto col-4">
         <div className="form-group">
-          <label className="form-label">Email</label>
+          <label className="form-label">Email (*)</label>
           <input
             type="email"
             className="form-control"
@@ -75,10 +75,10 @@ const Register = () => {
           />
         </div>
         <div className="form-group">
-          <label className="form-label">Password</label>
+          <label className="form-label">Password (*)</label>
           <div className="show-hide-pass">
             <input
-              type={visible ? "text" : "password"}
+              type={isShowPassword ? "text" : "password"}
               name="password"
               className="form-control"
               value={password}
@@ -87,7 +87,7 @@ const Register = () => {
               }}
             />
             <button onClick={toggleVisibility} className="btn-show-hide">
-              {visible ? <FaEyeSlash /> : <FaEye />}
+              {isShowPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
         </div>
