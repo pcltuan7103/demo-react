@@ -1,13 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { getDataQuiz } from "../../services/apiServices";
 import _ from "lodash";
 import "./DetailQuiz.scss";
+import Question from "./Question";
+import { set } from "nprogress";
 
 const DetailQuiz = () => {
   const params = useParams();
   const quizId = params.id;
   const location = useLocation();
+
+  const [dataQuiz, setDataQuiz] = useState([]);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
     fecthQuestion();
@@ -33,7 +38,16 @@ const DetailQuiz = () => {
           return { questionId: key, answers, questionDescription, image };
         })
         .value();
+      setDataQuiz(data);
     }
+  };
+
+  const handleBack = () => {
+    if (index - 1 < 0) return;
+    setIndex(index - 1);
+  };
+  const handleNext = () => {
+    if (dataQuiz && dataQuiz.length > index + 1) setIndex(index + 1);
   };
 
   return (
@@ -47,16 +61,28 @@ const DetailQuiz = () => {
           <img />
         </div>
         <div className="q-content">
-          <div className="question"></div>
-          <div className="answer">
-            <div className="a-child"></div>
-            <div className="a-child"></div>
-            <div className="a-child"></div>
-          </div>
+          <Question
+            index={index}
+            data={dataQuiz && dataQuiz.length > 0 ? dataQuiz[index] : []}
+          />
         </div>
         <div className="footer">
-          <button className="btn btn-secondary">Back</button>
-          <button className="btn btn-primary">Next</button>
+          <button
+            className="btn btn-secondary"
+            onClick={() => {
+              handleBack();
+            }}
+          >
+            Back
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={() => {
+              handleNext();
+            }}
+          >
+            Next
+          </button>
         </div>
       </div>
       <div className="right-content"></div>
