@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import { getDataQuiz } from "../../services/apiServices";
+import { getDataQuiz, postSubmitQuiz } from "../../services/apiServices";
 import _ from "lodash";
 import "./DetailQuiz.scss";
 import Question from "./Question";
 import { set } from "nprogress";
+import ModalResult from "./ModalResult";
 
 const DetailQuiz = () => {
   const params = useParams();
   const quizId = params.id;
   const location = useLocation();
-
+  const [isShowModalResult, setIsShowModalResult] = useState(false);
+  const [dataModalResult, setDataModalResult] = useState({});
   const [dataQuiz, setDataQuiz] = useState([]);
   const [index, setIndex] = useState(0);
 
@@ -74,7 +76,7 @@ const DetailQuiz = () => {
     }
   };
 
-  const handlefinishQuiz = () => {
+  const handleFinishQuiz = async () => {
     let payload = {
       quizId: +quizId,
       answers: [],
@@ -95,7 +97,18 @@ const DetailQuiz = () => {
         });
       });
       payload.answers = answers;
-      console.log("check payload", payload);
+
+      let res = await postSubmitQuiz(payload);
+      if (res && res.EC === 0) {
+        setDataModalResult({
+          countCorrect: res.DT.countCorrect,
+          countTotal: res.DT.countTotal,
+          quizData: res.DT.quizData,
+        });
+        setIsShowModalResult(true);
+      } else {
+        alert("Something wrong");
+      }
     }
   };
 
@@ -136,7 +149,7 @@ const DetailQuiz = () => {
           <button
             className="btn btn-warning"
             onClick={() => {
-              handlefinishQuiz();
+              handleFinishQuiz();
             }}
           >
             Finish
@@ -144,6 +157,11 @@ const DetailQuiz = () => {
         </div>
       </div>
       <div className="right-content"></div>
+      <ModalResult
+        show={isShowModalResult}
+        setShow={setIsShowModalResult}
+        dataModalResult={dataModalResult}
+      />
     </div>
   );
 };
