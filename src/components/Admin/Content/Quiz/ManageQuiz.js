@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "./ManageQuiz.scss";
 import Select from "react-select";
+import { postCreateNewQuiz } from "../../../../services/apiServices";
+import { toast } from "react-toastify";
 
 const options = [
   { value: "EASY", label: "EASY" },
@@ -11,10 +13,32 @@ const options = [
 const ManageQuiz = (props) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [type, setType] = useState("EASY");
-  const [image, setimage] = useState("");
+  const [type, setType] = useState("");
+  const [image, setImage] = useState("");
 
-  const handleChangeFile = (event) => {};
+  const handleChangeFile = (event) => {
+    if (event.target && event.target.files && event.target.files[0]) {
+      setImage(event.target.files[0]);
+    } else {
+    }
+  };
+
+  const handleSubmitAddQuiz = async () => {
+    if (!name || !description) {
+      toast.error("Name/Description is required!");
+      return;
+    }
+    let res = await postCreateNewQuiz(description, name, type?.value, image);
+    if (res && res.EC === 0) {
+      toast.success(res.EM);
+      setName("");
+      setDescription("");
+      setImage(null);
+    } else {
+      toast.error(res.EM);
+    }
+  };
+
   return (
     <div className="quiz-container">
       <div className="title">Manage Quizzes</div>
@@ -48,10 +72,8 @@ const ManageQuiz = (props) => {
           </div>
           <div className="my-3">
             <Select
-              value={type}
-              onChange={(event) => {
-                setType(event.target.value);
-              }}
+              defaultValue={type}
+              onChange={setType}
               options={options}
               placeholder="Quiz's type"
             />
@@ -66,7 +88,16 @@ const ManageQuiz = (props) => {
               }}
             />
           </div>
-          <input type="submit" value="Submit" />
+          <div>
+            <button
+              onClick={() => {
+                handleSubmitAddQuiz();
+              }}
+              className="btn btn-warning mt-3"
+            >
+              Save
+            </button>
+          </div>
         </fieldset>
       </div>
       <div className="list"></div>
