@@ -1,18 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { getAllQuizForAdmin } from "../../../../services/apiServices";
+import ModalUpdateQuiz from "./ModalUpdateQuiz";
+import ModalDeleteQuiz from "./ModalDeleteQuiz";
 
 const TableQuiz = (props) => {
-  const [listQuiz, setListQuiz] = useState([]);
+  const [showModalUpdateQuiz, setShowModalUpdateQuiz] = useState(false);
+  const [showModalDeleteQuiz, setShowModalDeleteQuiz] = useState(false);
+  const [quizUpdate, setQuizUpdate] = useState({});
+  const [quizDelete, setquizDelete] = useState({});
+
+  const handleClickBtnUpdateQuiz = (quiz) => {
+    setShowModalUpdateQuiz(true);
+    setQuizUpdate(quiz);
+  };
+
+  const handleClickBtnDeleteQuiz = (quiz) => {
+    setShowModalDeleteQuiz(true);
+    setquizDelete(quiz);
+  };
 
   useEffect(() => {
-    fetchQuiz();
+    props.fetchQuiz();
   }, []);
 
-  const fetchQuiz = async () => {
-    let res = await getAllQuizForAdmin();
-    if (res && res.EC === 0) {
-      setListQuiz(res.DT);
-    }
+  const resetQuizUpdate = () => {
+    setQuizUpdate({});
   };
 
   return (
@@ -29,8 +41,8 @@ const TableQuiz = (props) => {
           </tr>
         </thead>
         <tbody>
-          {listQuiz &&
-            listQuiz.map((item, index) => {
+          {props.listQuiz &&
+            props.listQuiz.map((item, index) => {
               return (
                 <tr key={`table-quiz-${index}`}>
                   <th>{item.id}</th>
@@ -45,14 +57,41 @@ const TableQuiz = (props) => {
                       alignItems: "center",
                     }}
                   >
-                    <button className="btn btn-warning">Edit</button>
-                    <button className="btn btn-danger">Delete</button>
+                    <button
+                      className="btn btn-warning"
+                      onClick={() => {
+                        handleClickBtnUpdateQuiz(item);
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => {
+                        handleClickBtnDeleteQuiz(item);
+                      }}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               );
             })}
         </tbody>
       </table>
+      <ModalUpdateQuiz
+        show={showModalUpdateQuiz}
+        setShow={setShowModalUpdateQuiz}
+        quizUpdate={quizUpdate}
+        resetQuizUpdate={resetQuizUpdate}
+        fetchQuiz={props.fetchQuiz}
+      />
+      <ModalDeleteQuiz
+        show={showModalDeleteQuiz}
+        setShow={setShowModalDeleteQuiz}
+        quizDelete={quizDelete}
+        fetchQuiz={props.fetchQuiz}
+      />
     </>
   );
 };

@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import "./ManageQuiz.scss";
 import Select from "react-select";
-import { postCreateNewQuiz } from "../../../../services/apiServices";
+import {
+  getAllQuizForAdmin,
+  postCreateNewQuiz,
+} from "../../../../services/apiServices";
 import { toast } from "react-toastify";
 import TableQuiz from "./TableQuiz";
 import Accordion from "react-bootstrap/Accordion";
@@ -17,6 +20,7 @@ const ManageQuiz = (props) => {
   const [description, setDescription] = useState("");
   const [type, setType] = useState("");
   const [image, setImage] = useState("");
+  const [listQuiz, setListQuiz] = useState([]);
 
   const handleChangeFile = (event) => {
     if (event.target && event.target.files && event.target.files[0]) {
@@ -36,8 +40,17 @@ const ManageQuiz = (props) => {
       setName("");
       setDescription("");
       setImage(null);
+      setType("");
+      await fetchQuiz();
     } else {
       toast.error(res.EM);
+    }
+  };
+
+  const fetchQuiz = async () => {
+    let res = await getAllQuizForAdmin();
+    if (res && res.EC === 0) {
+      setListQuiz(res.DT);
     }
   };
 
@@ -109,7 +122,7 @@ const ManageQuiz = (props) => {
       </Accordion>
 
       <div className="list-detail">
-        <TableQuiz />
+        <TableQuiz listQuiz={listQuiz} fetchQuiz={fetchQuiz} />
       </div>
     </div>
   );
