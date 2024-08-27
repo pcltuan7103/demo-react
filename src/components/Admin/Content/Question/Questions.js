@@ -16,9 +16,10 @@ import {
   postCreateNewAnswerForQuestion,
   postCreateNewQuestionForQuiz,
 } from "../../../../services/apiServices";
+import { toast } from "react-toastify";
 
 const Questions = (props) => {
-  const [questions, setQuestions] = useState([
+  const initQuestions = [
     {
       id: uuidv4(),
       description: "",
@@ -26,7 +27,8 @@ const Questions = (props) => {
       imageName: "",
       answers: [{ id: uuidv4(), description: "", isCorrect: false }],
     },
-  ]);
+  ];
+  const [questions, setQuestions] = useState(initQuestions);
   const [isPreviewImage, setIsPreviewImage] = useState(false);
   const [dataImagePreview, setDataImagePreview] = useState({
     title: "",
@@ -139,24 +141,70 @@ const Questions = (props) => {
   };
 
   const handleSubmitQuestionForQuiz = async () => {
-    await Promise.all(
-      questions.map(async (question) => {
-        const q = await postCreateNewQuestionForQuiz(
-          +selectedQuiz.value,
-          question.description,
-          question.image
+    if (_.isEmpty(selectedQuiz)) {
+      toast.error("Please choose a Quiz!");
+      return;
+    }
+
+    let isValidAnswer = true;
+    let indexQ = 0,
+      indexA = 0;
+
+    // Validate answers
+    for (let i = 0; i < questions.length; i++) {
+      for (let j = 0; j < questions[i].answers.length; j++) {
+        if (!questions[i].answers[j].description) {
+          isValidAnswer = false;
+          indexQ = i;
+          indexA = j;
+          break;
+        }
+      }
+      if (!isValidAnswer) break;
+    }
+
+    if (!isValidAnswer) {
+      toast.error(
+        `Answer ${indexA + 1} in Question ${indexQ + 1} cannot be empty!`
+      );
+      return;
+    }
+
+    // Validate questions
+    let isValidQuestion = true;
+    let indexQ1 = 0;
+
+    for (let i = 0; i < questions.length; i++) {
+      if (!questions[i].description) {
+        isValidQuestion = false;
+        indexQ1 = i;
+        break;
+      }
+    }
+
+    if (!isValidQuestion) {
+      toast.error(`Question ${indexQ1 + 1} cannot be empty!`);
+      return;
+    }
+
+    // Submit questions and answers
+    for (const question of questions) {
+      const q = await postCreateNewQuestionForQuiz(
+        +selectedQuiz.value,
+        question.description,
+        question.image
+      );
+      for (const answer of question.answers) {
+        await postCreateNewAnswerForQuestion(
+          answer.description,
+          answer.isCorrect,
+          q.DT.id
         );
-        return Promise.all(
-          question.answers.map(async (answer) => {
-            return await postCreateNewAnswerForQuestion(
-              answer.description,
-              answer.isCorrect,
-              q.DT.id
-            );
-          })
-        );
-      })
-    );
+      }
+    }
+
+    toast.success("Questions and answers created successfully!");
+    setQuestions(initQuestions);
   };
 
   const handlePreviewImage = (qID) => {
