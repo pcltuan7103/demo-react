@@ -21,10 +21,10 @@ const Questions = (props) => {
   const [questions, setQuestions] = useState([
     {
       id: uuidv4(),
-      description: "Question 1",
+      description: "",
       image: "",
       imageName: "",
-      answers: [{ id: uuidv4(), description: "Answer 1", isCorrect: false }],
+      answers: [{ id: uuidv4(), description: "", isCorrect: false }],
     },
   ]);
 
@@ -52,14 +52,65 @@ const Questions = (props) => {
     if (type === "ADD") {
       const newAnswer = { id: uuidv4(), description: "", isCorrect: false };
       let index = questionsClone.findIndex((item) => item.id === qID);
-      questionsClone[index].answers.push(newAnswer);
+      if (index > -1) {
+        questionsClone[index].answers.push(newAnswer);
+      }
       setQuestions(questionsClone);
     }
     if (type === "REMOVE") {
       let index = questionsClone.findIndex((item) => item.id === qID);
-      questionsClone[index].answers = questionsClone[index].answers.filter(
-        (item) => item.id !== aID
+      if (index > -1) {
+        questionsClone[index].answers = questionsClone[index].answers.filter(
+          (item) => item.id !== aID
+        );
+      }
+      setQuestions(questionsClone);
+    }
+  };
+
+  const handleOnChange = (type, qID, value) => {
+    if (type === "QUESTION") {
+      let questionsClone = _.cloneDeep(questions);
+      let index = questionsClone.findIndex((item) => item.id === qID);
+      if (index > -1) {
+        questionsClone[index].description = value;
+        setQuestions(questionsClone);
+      }
+    }
+  };
+
+  const handleAnswerQuestion = (type, aID, qID, value) => {
+    let questionsClone = _.cloneDeep(questions);
+    let qIndex = questionsClone.findIndex((item) => item.id === qID);
+    if (qIndex > -1) {
+      questionsClone[qIndex].answers = questionsClone[qIndex].answers.map(
+        (answer) => {
+          if (answer && answer.id === aID) {
+            if (type === "CHECKBOX") {
+              answer.isCorrect = value;
+            }
+            if (type === "INPUT") {
+              answer.description = value;
+            }
+          }
+          return answer;
+        }
       );
+      setQuestions(questionsClone);
+    }
+  };
+
+  const handleOnChangeFileQuestion = (qID, event) => {
+    let questionsClone = _.cloneDeep(questions);
+    let index = questionsClone.findIndex((item) => item.id === qID);
+    if (
+      index > -1 &&
+      event.target &&
+      event.target.files &&
+      event.target.files[0]
+    ) {
+      questionsClone[index].image = event.target.files[0];
+      questionsClone[index].imageName = event.target.files[0].name;
       setQuestions(questionsClone);
     }
   };
@@ -90,17 +141,33 @@ const Questions = (props) => {
                       className="form-control"
                       value={question.description}
                       placeholder="name@example.com"
+                      onChange={(event) => {
+                        handleOnChange(
+                          "QUESTION",
+                          question.id,
+                          event.target.value
+                        );
+                      }}
                     />
-                    <label for="floatingInput">
-                      Question {index + 1}'s Description
-                    </label>
+                    <label>Question {index + 1}'s Description</label>
                   </div>
                   <div className="group-upload">
-                    <label>
+                    <label htmlFor={`${question.id}`}>
                       <RiImageAddFill className="label-upload" />
                     </label>
-                    <input type="file" hidden />
-                    <span>0 file is uploaded</span>
+                    <input
+                      id={`${question.id}`}
+                      type="file"
+                      hidden
+                      onChange={(event) => {
+                        handleOnChangeFileQuestion(question.id, event);
+                      }}
+                    />
+                    <span>
+                      {question.image
+                        ? question.imageName
+                        : "0 file is uploaded"}
+                    </span>
                   </div>
                   <div className="btn-add">
                     <span
@@ -130,16 +197,32 @@ const Questions = (props) => {
                         <input
                           className="form-check-input iscorrect"
                           type="checkbox"
+                          checked={answer.isCorrect}
+                          onChange={(event) => {
+                            handleAnswerQuestion(
+                              "CHECKBOX",
+                              answer.id,
+                              question.id,
+                              event.target.checked
+                            );
+                          }}
                         />
                         <div className="form-floating answer-name">
                           <input
                             value={answer.description}
                             type="text"
                             className="form-control"
-                            id="floatingInput"
                             placeholder="name@example.com"
+                            onChange={(event) => {
+                              handleAnswerQuestion(
+                                "INPUT",
+                                answer.id,
+                                question.id,
+                                event.target.value
+                              );
+                            }}
                           />
-                          <label for="floatingInput">Answer {index + 1}</label>
+                          <label>Answer {index + 1}</label>
                         </div>
                         <div className="btn-group">
                           <span
@@ -170,6 +253,11 @@ const Questions = (props) => {
               </div>
             );
           })}
+        {questions && questions.length > 0 && (
+          <div>
+            <button className="btn btn-warning">Save Questions</button>
+          </div>
+        )}
       </div>
     </div>
   );
